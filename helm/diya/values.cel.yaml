@@ -1,0 +1,95 @@
+rules:
+    - expr: type(values.fullnameOverride) == string
+      desc: fullnameOverride must be a string
+    - expr: has(values.readinessProbe)
+      desc: readinessProbe must be defined
+    - expr: has(values.readinessProbe.httpGet)
+      desc: httpGet must be defined
+    - expr: type(values.readinessProbe.httpGet.path) == string
+      desc: path must be a string
+    - expr: type(values.readinessProbe.httpGet.port) == string
+      desc: port must be a string
+    - expr: has(values.affinity)
+      desc: affinity must be defined
+    - expr: type(values.nameOverride) == string
+      desc: nameOverride must be a string
+    - expr: has(values.serviceAccount)
+      desc: serviceAccount must be defined
+    - expr: type(values.serviceAccount.create) == bool
+      desc: create must be a boolean
+    - expr: type(values.serviceAccount.automount) == bool
+      desc: automount must be a boolean
+    - expr: has(values.serviceAccount.annotations)
+      desc: annotations must be defined
+    - expr: type(values.serviceAccount.name) == string
+      desc: name must be a string
+    - expr: has(values.podLabels)
+      desc: podLabels must be defined
+    - expr: has(values.securityContext)
+      desc: securityContext must be defined
+    - expr: has(values.nodeSelector)
+      desc: nodeSelector must be defined
+    - expr: size(values.tolerations) >= 0
+      desc: tolerations must be an array
+    - expr: size(values.volumes) >= 0
+      desc: volumes must be an array
+    - expr: size(values.volumeMounts) >= 0
+      desc: volumeMounts must be an array
+    - expr: type(values.replicaCount) == int
+      desc: replicaCount must be an integer
+    - expr: has(values.image)
+      desc: image must be defined
+    - expr: type(values.image.repository) == string
+      desc: repository must be a string
+    - expr: type(values.image.pullPolicy) == string
+      desc: pullPolicy must be a string
+    - expr: type(values.image.tag) == string
+      desc: tag must be a string
+    - expr: size(values.imagePullSecrets) >= 0
+      desc: imagePullSecrets must be an array
+    - expr: has(values.ingress)
+      desc: ingress must be defined
+    - expr: type(values.ingress.enabled) == bool
+      desc: enabled must be a boolean
+    - expr: type(values.ingress.className) == string
+      desc: className must be a string
+    - expr: has(values.ingress.annotations)
+      desc: annotations must be defined
+    - expr: size(values.ingress.hosts) >= 0
+      desc: hosts must be an array
+    - expr: type(values.ingress.hosts[0].host) == string
+      desc: host must be a string
+    - expr: size(values.ingress.tls) >= 0
+      desc: tls must be an array
+    - expr: has(values.livenessProbe)
+      desc: livenessProbe must be defined
+    - expr: has(values.livenessProbe.httpGet)
+      desc: httpGet must be defined
+    - expr: type(values.livenessProbe.httpGet.path) == string
+      desc: path must be a string
+    - expr: type(values.livenessProbe.httpGet.port) == string
+      desc: port must be a string
+    - expr: has(values.autoscaling)
+      desc: autoscaling must be defined
+    - expr: type(values.autoscaling.maxReplicas) == int
+      desc: maxReplicas must be an integer
+    - expr: type(values.autoscaling.targetCPUUtilizationPercentage) == int
+      desc: targetCPUUtilizationPercentage must be an integer
+    - expr: type(values.autoscaling.enabled) == bool
+      desc: enabled must be a boolean
+    - expr: type(values.autoscaling.minReplicas) == int
+      desc: minReplicas must be an integer
+    - expr: has(values.podAnnotations)
+      desc: podAnnotations must be defined
+    - expr: has(values.podSecurityContext)
+      desc: podSecurityContext must be defined
+    - expr: has(values.service)
+      desc: service must be defined
+    - expr: type(values.service.port) == int
+      desc: port must be an integer
+    - expr: values.service.port >= 1 && values.service.port <= 65535
+      desc: port must be a valid port number (1-65535)
+    - expr: type(values.service.type) == string
+      desc: type must be a string
+    - expr: has(values.resources)
+      desc: resources must be defined

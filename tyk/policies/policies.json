@@ -1,0 +1,29 @@
+{
+  "policy-for-query-service": {
+    "name": "Query Service Policy",
+    "active": true,
+    "access_rights": {
+      "query-service-api": {
+        "api_name": "Query Service API",
+        "api_id": "query-service-api",
+        "versions": ["Default"]
+      }
+    },
+    "rate": 1000,
+    "per": 60,
+    "quota_max": -1
+  }
+}
+
+
+// curl -X POST \
+//   http://localhost:8087/tyk/keys/create \
+//   -H 'Content-Type: application/json' \
+//   -H 'x-tyk-authorization: 352d20ee67be67f6340b4c0605b044bc4' \
+//   -d '{
+//     "allowance": 1000,
+//     "rate": 1000,
+//     "per": 60,
+//     "expires": -1,
+//     "apply_policies": ["policy-for-query-service"]
+// }'

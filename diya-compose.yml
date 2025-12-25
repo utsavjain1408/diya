@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  # Data Ingestion Service
+  ingestion-service:
+    build: ./data-ingestion-service
+    environment:
+      # Use service names for internal communication
+      - DATABASE_URL=root:example@tcp(mariadb:3306)/diya?charset=utf8mb4&parseTime=True&loc=Local
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+    depends_on:
+      - mariadb
+      - rabbitmq
+
+  # Query Service
+  query-service:
+    build: ./query-service
+    environment:
+      - DATABASE_URL=root:example@tcp(mariadb:3306)/diya?charset=utf8mb4&parseTime=True&loc=Local
+    ports:
+      # This port is now internal to the Docker network
+      - "8082:8082" 
+    depends_on:
+      - mariadb
+  
+  tyk-dashboard:
+    image: tykio/tyk-dashboard:${DASHBOARD_VERSION:-v5.6.1}
+    container_name: tyk-dashboard
+    environment:
+      - TYK_DB_LICENSEKEY=${DASH_LICENSE:?License key missing from Docker environment file "".env" file.  Review The Getting Started steps in README.md.}
+      - TYK_DB_STORAGE_MAIN_TYPE=postgres
+      - TYK_DB_STORAGE_MAIN_CONNECTIONSTRING=user=postgres password=topsecretpassword host=tyk-postgres port=5432 database=tyk_analytics
+    depends_on:
+      tyk-postgres:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./confs/tyk_analytics.env
+    networks:
+      - tyk
+  # Tyk API Gateway
+  tyk-gateway:
+    image: tykio/tyk-gateway:v5.2.1
+    ports:
+      - "8087:8080" # Expose gateway to the host
+    volumes:
+      - ./tyk/tyk.conf:/opt/tyk-gateway/tyk.conf
+      - ./tyk/apps:/opt/tyk-gateway/apps
+      - ./tyk/policies:/opt/tyk-gateway/policies
+    depends_on:
+      - tyk-redis
+      - query-service
+    networks:
+      default:
+        aliases:
+          - tyk-gateway
+
+  # Tyk Redis Dependency
+  tyk-redis:
+    image: redis:6.2-alpine
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management # Use the official RabbitMQ image with management plugin
+    hostname: rabbitmq # Set a hostname for easier service discovery within the Docker network
+    ports:
+      - "5672:5672" # AMQP protocol port
+      - "15672:15672" # RabbitMQ Management UI port
+    environment:
+      RABBITMQ_DEFAULT_USER: guest # Default username
+      RABBITMQ_DEFAULT_PASS: guest # Default password (change for production)
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq # Persist RabbitMQ data and configurations
+      - rabbitmq_logs:/var/log/rabbitmq # Persist RabbitMQ logs
+    healthcheck: # Optional: Define a health check for the service
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  mariadb:
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: example
+    ports:
+      - 3306:3306
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8085:8080
+
+volumes:
+  rabbitmq_data:
+  rabbitmq_logs:

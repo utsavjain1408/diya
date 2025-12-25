@@ -1,0 +1,40 @@
+# Use root/example as user/password credentials
+
+services:
+
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: example
+      MARIADB_DATABASE: diya
+    ports:
+      - 3306:3306
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+
+  rabbitmq:
+    image: rabbitmq:3-management # Use the official RabbitMQ image with management plugin
+    hostname: rabbitmq # Set a hostname for easier service discovery within the Docker network
+    ports:
+      - "5672:5672" # AMQP protocol port
+      - "15672:15672" # RabbitMQ Management UI port
+    environment:
+      RABBITMQ_DEFAULT_USER: guest # Default username
+      RABBITMQ_DEFAULT_PASS: guest # Default password (change for production)
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq # Persist RabbitMQ data and configurations
+      - rabbitmq_logs:/var/log/rabbitmq # Persist RabbitMQ logs
+    healthcheck: # Optional: Define a health check for the service
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  rabbitmq_data:
+  rabbitmq_logs:

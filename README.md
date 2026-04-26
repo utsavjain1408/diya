@@ -64,3 +64,19 @@ Your application will be a message-driven system with five microservices.
 - Refine deployment:
 - Explore GitOps for automated deployments. Tools like ArgoCD can be used to monitor your Git repository and automatically apply changes to your cluster.
 Document your application, microservice responsibilities, and Helm chart structure. This will be an invaluable reference
+
+## Demonstration of the following skills 
+1. Helm nested structure
+2. Github Action AWS integeration using terraform
+3. An API Gateway product
+4. Docker Build using buildx
+
+
+Notes:
+### GitHub AWS connection:
+Two step process with manual Bootstraping
+## Bootstrapping
+1. Accounts setup
+    1. Create roles which will be assumed by github action in each of the four environments.
+    1. 
+    

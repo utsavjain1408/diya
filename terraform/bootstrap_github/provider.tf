@@ -24,7 +24,7 @@ provider "aws" {
     tags = {
       Environment = "Development"
       Provisioner = "Terraform"
-      Repo    = "github.com:utsavjain1408/diya.git"
+      Repo    = "github.com:utsavjain1408/diyaaws .git"
     }
   }
 }

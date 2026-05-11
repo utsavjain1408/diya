@@ -15,14 +15,14 @@ module "tfbootstrap_dev" {
 module "tfbootstrap_stage" {
   source = "./modules/tfbootstrap"
   providers = {
-    aws = aws.testing
+    aws = aws.staging
   }
   region             = var.region
   prefix             = var.prefix
   environment        = "staging"
   github_org         = var.github_org
   github_repo        = var.github_repo
-  github_environment = "stageing"
+  github_environment = "staging"
 }
 
 module "tfbootstrap_prod" {

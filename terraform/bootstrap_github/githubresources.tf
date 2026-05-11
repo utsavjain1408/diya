@@ -153,7 +153,7 @@ locals {
   environment_variables_dev = merge(
     local.environment_variables_common,
     {
-      TF_VAR_ENVCODE = "dv"
+      TF_VAR_ENVCODE = "dev"
       TF_VAR_ENVTAG  = "Development"
     }
   )
@@ -161,15 +161,15 @@ locals {
   environment_variables_test = merge(
     local.environment_variables_common,
     {
-      TF_VAR_ENVCODE = "ts"
-      TF_VAR_ENVTAG  = "Testing"
+      TF_VAR_ENVCODE = "state"
+      TF_VAR_ENVTAG  = "Staging"
     }
   )
   # Declare prod specific GitHub Environments variables
   environment_variables_prod = merge(
     local.environment_variables_common,
     {
-      TF_VAR_ENVCODE = "pd"
+      TF_VAR_ENVCODE = "prod"
       TF_VAR_ENVTAG  = "Production"
     }
   )
@@ -180,7 +180,7 @@ resource "github_actions_environment_variable" "dev" {
   for_each = local.environment_variables_dev
 
   repository    = var.github_repo
-  environment   = github_repository_environment.env["dev"].environment
+  environment   = github_repository_environment.env["development"].environment
   variable_name = each.key
   value         = each.value
 }
@@ -189,7 +189,7 @@ resource "github_actions_environment_variable" "test" {
   for_each = local.environment_variables_test
 
   repository    = var.github_repo
-  environment   = github_repository_environment.env["test"].environment
+  environment   = github_repository_environment.env["staging"].environment
   variable_name = each.key
   value         = each.value
 }
@@ -198,7 +198,7 @@ resource "github_actions_environment_variable" "prod" {
   for_each = local.environment_variables_prod
 
   repository    = var.github_repo
-  environment   = github_repository_environment.env["prod"].environment
+  environment   = github_repository_environment.env["production"].environment
   variable_name = each.key
   value         = each.value
 }

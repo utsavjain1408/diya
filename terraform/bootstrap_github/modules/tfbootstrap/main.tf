@@ -6,22 +6,25 @@ resource "aws_s3_bucket" "terraform_state" {
     prevent_destroy = true
   }
 }
+# Enable versioning so you can recover old state files
+resource "aws_s3_bucket_versioning" "enabled" {
+  bucket = aws_s3_bucket.terraform_state.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 # Enable Object Lock on the S3 bucket (must be set at bucket creation)
 resource "aws_s3_bucket_object_lock_configuration" "terraform_state" {
   bucket = aws_s3_bucket.terraform_state.id
+
+  depends_on = [aws_s3_bucket_versioning.enabled]
 
   rule {
     default_retention {
       mode = "GOVERNANCE"  # Use "COMPLIANCE" for stricter protection
       days = 30            # Adjust retention period as needed
     }
-  }
-}
-# Enable versioning so you can recover old state files
-resource "aws_s3_bucket_versioning" "enabled" {
-  bucket = aws_s3_bucket.terraform_state.id
-  versioning_configuration {
-    status = "Enabled"
   }
 }
 
@@ -141,8 +144,8 @@ data "aws_iam_policy_document" "TerraformState" {
       "s3:DeleteObjectVersion"
     ]
     resources = [
-      "${aws_s3_bucket.tfstate.arn}",
-      "${aws_s3_bucket.tfstate.arn}/*"
+      "${aws_s3_bucket.terraform_state.arn}",
+      "${aws_s3_bucket.terraform_state.arn}/*"
       ]
   }
 }
@@ -181,5 +184,5 @@ output "gha_iam_role" {
   value = aws_iam_role.github_actions.arn
 }
 output "tfstate_bucket_name" {
-  value = aws_s3_bucket.tfstate.bucket
+  value = aws_s3_bucket.terraform_state.bucket
 }

@@ -1,3 +1,9 @@
+terraform {
+  # Partial configuration; bucket/key/region are supplied at init time via
+  # -backend-config flags in the GitHub Actions workflow.
+  backend "s3" {}
+}
+
 provider "aws" {
   alias   = "primary"
   profile = "default"

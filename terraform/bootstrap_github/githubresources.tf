@@ -161,7 +161,7 @@ locals {
   environment_variables_test = merge(
     local.environment_variables_common,
     {
-      TF_VAR_ENVCODE = "state"
+      TF_VAR_ENVCODE = "stage"
       TF_VAR_ENVTAG  = "Staging"
     }
   )

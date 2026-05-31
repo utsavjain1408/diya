@@ -84,3 +84,16 @@ jobs:
       - name: Terraform Apply
         id: apply
         run: terraform apply -auto-approve -input=false
+
+      - name: Publish DNS outputs to job summary
+        if: steps.apply.outcome == 'success'
+        run: |
+          {
+            echo "## DNS outputs"
+            echo ""
+            echo "### Parent zone name servers"
+            echo "Add these as the NS records for \`diya\` under \`utsavjain.com\` at Squarespace:"
+            echo ""
+            terraform output -json parent_name_servers \
+              | jq -r 'if . == null then "_Not applicable for this environment._" else .[] | "- `\(.)`" end'
+          } >> "$GITHUB_STEP_SUMMARY"

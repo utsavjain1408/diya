@@ -430,6 +430,25 @@ data "aws_iam_policy_document" "DiyaApp" {
       "*"
       ]
   }
+  # Route 53 permissions for managing the diya.utsavjain.com hosted zones and records
+  statement {
+    actions   = [
+      "route53:CreateHostedZone",
+      "route53:DeleteHostedZone",
+      "route53:GetHostedZone",
+      "route53:GetHostedZoneCount",
+      "route53:ListHostedZones",
+      "route53:ListHostedZonesByName",
+      "route53:ListResourceRecordSets",
+      "route53:ChangeResourceRecordSets",
+      "route53:GetChange",
+      "route53:ChangeTagsForResource",
+      "route53:ListTagsForResource"
+    ]
+    resources = [
+      "*"
+      ]
+  }
 }
 
 # An example of a less restrictive policy WARNING: Use with caution

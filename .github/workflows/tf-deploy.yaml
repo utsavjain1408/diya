@@ -10,7 +10,7 @@ on:
         default: development
         options:
           - development
-          - testing
+          - staging
           - production
 permissions:
   # id-token write required for OIDC, contents read required for actions/checkout

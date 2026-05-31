@@ -16,14 +16,14 @@ locals {
   gha_environment = ["development", "staging", "production"]
 
   gha_iam_role = {
-    dev  = module.tfbootstrap_dev.gha_iam_role
-    stage = module.tfbootstrap_stage.gha_iam_role
-    prod = module.tfbootstrap_prod.gha_iam_role
+    development = module.tfbootstrap_dev.gha_iam_role
+    staging     = module.tfbootstrap_stage.gha_iam_role
+    production  = module.tfbootstrap_prod.gha_iam_role
   }
   tfstate_bucket_name = {
-    dev  = module.tfbootstrap_dev.tfstate_bucket_name
-    stage = module.tfbootstrap_stage.tfstate_bucket_name
-    prod = module.tfbootstrap_prod.tfstate_bucket_name
+    development = module.tfbootstrap_dev.tfstate_bucket_name
+    staging     = module.tfbootstrap_stage.tfstate_bucket_name
+    production  = module.tfbootstrap_prod.tfstate_bucket_name
   }
 }
 

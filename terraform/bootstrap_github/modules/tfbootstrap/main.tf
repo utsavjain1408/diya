@@ -155,6 +155,12 @@ resource "aws_iam_openid_connect_provider" "github_actions" {
   url             = "https://token.actions.githubusercontent.com"
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = [data.tls_certificate.github.certificates[0].sha1_fingerprint]
+
+  # GitHub's OIDC thumbprint rotates and AWS no longer relies on it for this
+  # provider; ignore drift so it doesn't require iam:UpdateOpenIDConnectProviderThumbprint.
+  lifecycle {
+    ignore_changes = [thumbprint_list]
+  }
 }
 
 resource "aws_iam_role" "github_actions" {

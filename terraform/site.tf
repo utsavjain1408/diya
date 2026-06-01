@@ -8,11 +8,9 @@ locals {
 
   site_bucket_name = "diya-site-${lower(var.EnvTag)}-${data.aws_caller_identity.current.account_id}"
   site_origin_id   = "s3-${local.site_bucket_name}"
-}
 
-# AWS-managed CachingOptimized cache policy.
-data "aws_cloudfront_cache_policy" "optimized" {
-  name = "Managed-CachingOptimized"
+  # AWS-managed CachingOptimized policy (global ID; avoids cloudfront:ListCachePolicies).
+  cloudfront_cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6"
 }
 
 # Private S3 bucket holding the static site content.
@@ -110,7 +108,7 @@ resource "aws_cloudfront_distribution" "site" {
     target_origin_id       = local.site_origin_id
     viewer_protocol_policy = "redirect-to-https"
     compress               = true
-    cache_policy_id        = data.aws_cloudfront_cache_policy.optimized.id
+    cache_policy_id        = local.cloudfront_cache_policy_id
   }
 
   # Serve index.html for not-found paths (single-page coming-soon).

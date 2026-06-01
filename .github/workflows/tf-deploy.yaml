@@ -96,4 +96,12 @@ jobs:
             echo ""
             terraform output -json parent_name_servers \
               | jq -r 'if . == null then "_Not applicable for this environment._" else .[] | "- `\(.)`" end'
+            echo ""
+            echo "### Child subdomain zone"
+            echo "Zone: \`$(terraform output -raw child_zone_name 2>/dev/null || echo n/a)\`"
+            echo ""
+            echo "Name servers (add to \`subdomain_delegations\` for the production run):"
+            echo ""
+            terraform output -json child_name_servers \
+              | jq -r 'if . == null then "_Not applicable for this environment._" else .[] | "- `\(.)`" end'
           } >> "$GITHUB_STEP_SUMMARY"

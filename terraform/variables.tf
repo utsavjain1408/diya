@@ -21,3 +21,9 @@ variable "parent_domain" {
   type        = string
   default     = "diya.utsavjain.com"
 }
+
+variable "subdomain_delegations" {
+  description = "Map of child subdomain FQDN to its NS records. Used by the production run only to create delegation NS records in the parent zone. Populate from the dev/staging child zones' job-summary outputs."
+  type        = map(list(string))
+  default     = {}
+}

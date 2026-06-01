@@ -1,4 +1,4 @@
-on: push
+on: workflow_dispatch
 jobs:
   my_first_job:
     runs-on: ubuntu-latest

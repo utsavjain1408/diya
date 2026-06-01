@@ -85,31 +85,48 @@ jobs:
         id: apply
         run: terraform apply -auto-approve -input=false
 
-      - name: Publish DNS outputs to job summary
+      - name: Publish outputs to job summary
         if: steps.apply.outcome == 'success'
+        continue-on-error: true
         run: |
+          OUTPUTS="$(terraform output -json 2>/dev/null || echo '{}')"
+
+          format_ns_list() {
+            echo "$OUTPUTS" | jq -r --arg k "$1" '
+              (.[$k].value // .[$k] // null) |
+              if . == null then "_Not applicable for this environment._"
+              elif type == "array" then .[] | "- `\(.)`"
+              else "_Not applicable for this environment._" end
+            '
+          }
+
+          format_raw() {
+            echo "$OUTPUTS" | jq -r --arg k "$1" '
+              (.[$k].value // .[$k] // empty) |
+              if . == null or . == "" then "n/a" else . end
+            '
+          }
+
           {
             echo "## DNS outputs"
             echo ""
             echo "### Parent zone name servers"
             echo "Add these as the NS records for \`diya\` under \`utsavjain.com\` at Squarespace:"
             echo ""
-            terraform output -json parent_name_servers \
-              | jq -r 'if . == null then "_Not applicable for this environment._" else .[] | "- `\(.)`" end'
+            format_ns_list parent_name_servers
             echo ""
             echo "### Child subdomain zone"
-            echo "Zone: \`$(terraform output -raw child_zone_name 2>/dev/null || echo n/a)\`"
+            echo "Zone: \`$(format_raw child_zone_name)\`"
             echo ""
             echo "Name servers (add to \`subdomain_delegations\` for the production run):"
             echo ""
-            terraform output -json child_name_servers \
-              | jq -r 'if . == null then "_Not applicable for this environment._" else .[] | "- `\(.)`" end'
+            format_ns_list child_name_servers
             echo ""
             echo "## Static site outputs"
             echo ""
             echo "Set these as this environment's GitHub Actions variables for \`deploy-site\`:"
             echo ""
-            echo "- \`SITE_BUCKET\` = \`$(terraform output -raw site_bucket 2>/dev/null || echo n/a)\`"
-            echo "- \`CLOUDFRONT_DISTRIBUTION_ID\` = \`$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo n/a)\`"
-            echo "- Site URL: \`$(terraform output -raw site_url 2>/dev/null || echo n/a)\`"
+            echo "- \`SITE_BUCKET\` = \`$(format_raw site_bucket)\`"
+            echo "- \`CLOUDFRONT_DISTRIBUTION_ID\` = \`$(format_raw cloudfront_distribution_id)\`"
+            echo "- Site URL: \`$(format_raw site_url)\`"
           } >> "$GITHUB_STEP_SUMMARY"

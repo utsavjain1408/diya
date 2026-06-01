@@ -27,3 +27,9 @@ variable "subdomain_delegations" {
   type        = map(list(string))
   default     = {}
 }
+
+variable "site_environments" {
+  description = "Environments (EnvTag values) for which to build the static coming-soon site (S3 + CloudFront + ACM + Route 53)."
+  type        = list(string)
+  default     = ["Development"]
+}

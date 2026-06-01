@@ -1,0 +1,18 @@
+---
+description: How and where Terraform is executed in this repo
+alwaysApply: true
+---
+
+# Terraform execution policy
+
+- All application/infrastructure Terraform (the root `terraform/` config) MUST be
+  run from GitHub Actions (the `tf-deploy` workflow via OIDC). Do NOT run
+  `terraform apply` (or `plan` against real state) locally for it.
+- Local Terraform is allowed only when necessary for foundational bootstrap that
+  GitHub cannot perform itself: `terraform/bootstrap_aws` (cross-account assume
+  roles) and `terraform/bootstrap_github` (OIDC providers, deploy roles, env
+  secrets/vars, IAM policy grants).
+- Validation may always happen locally: `terraform fmt`, `terraform validate`,
+  and `terraform init -backend=false` are fine.
+- When infra changes are needed, edit the Terraform, push, and run the workflow
+  rather than applying locally.

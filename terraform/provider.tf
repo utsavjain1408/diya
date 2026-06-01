@@ -10,6 +10,13 @@ provider "aws" {
   region  = var.Region
 }
 
+# us-east-1 provider for the CloudFront ACM certificate (CloudFront only reads
+# certs from us-east-1). Uses the ambient credentials (OIDC in CI), not a profile.
+provider "aws" {
+  alias  = "us_east_1"
+  region = "us-east-1"
+}
+
 provider "aws" {
   alias   = "development"
   profile = "<FILLMEIN>"

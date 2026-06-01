@@ -449,6 +449,47 @@ data "aws_iam_policy_document" "DiyaApp" {
       "*"
       ]
   }
+  # CloudFront permissions for the static site distribution and cache invalidation
+  statement {
+    actions   = [
+      "cloudfront:CreateDistribution",
+      "cloudfront:UpdateDistribution",
+      "cloudfront:DeleteDistribution",
+      "cloudfront:GetDistribution",
+      "cloudfront:GetDistributionConfig",
+      "cloudfront:ListDistributions",
+      "cloudfront:TagResource",
+      "cloudfront:UntagResource",
+      "cloudfront:ListTagsForResource",
+      "cloudfront:CreateOriginAccessControl",
+      "cloudfront:UpdateOriginAccessControl",
+      "cloudfront:DeleteOriginAccessControl",
+      "cloudfront:GetOriginAccessControl",
+      "cloudfront:ListOriginAccessControls",
+      "cloudfront:CreateInvalidation",
+      "cloudfront:GetInvalidation",
+      "cloudfront:ListInvalidations"
+    ]
+    resources = [
+      "*"
+      ]
+  }
+  # ACM permissions for the CloudFront TLS certificate (us-east-1)
+  statement {
+    actions   = [
+      "acm:RequestCertificate",
+      "acm:DeleteCertificate",
+      "acm:DescribeCertificate",
+      "acm:GetCertificate",
+      "acm:ListCertificates",
+      "acm:AddTagsToCertificate",
+      "acm:RemoveTagsFromCertificate",
+      "acm:ListTagsForCertificate"
+    ]
+    resources = [
+      "*"
+      ]
+  }
 }
 
 # An example of a less restrictive policy WARNING: Use with caution

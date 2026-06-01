@@ -104,4 +104,12 @@ jobs:
             echo ""
             terraform output -json child_name_servers \
               | jq -r 'if . == null then "_Not applicable for this environment._" else .[] | "- `\(.)`" end'
+            echo ""
+            echo "## Static site outputs"
+            echo ""
+            echo "Set these as this environment's GitHub Actions variables for \`deploy-site\`:"
+            echo ""
+            echo "- \`SITE_BUCKET\` = \`$(terraform output -raw site_bucket 2>/dev/null || echo n/a)\`"
+            echo "- \`CLOUDFRONT_DISTRIBUTION_ID\` = \`$(terraform output -raw cloudfront_distribution_id 2>/dev/null || echo n/a)\`"
+            echo "- Site URL: \`$(terraform output -raw site_url 2>/dev/null || echo n/a)\`"
           } >> "$GITHUB_STEP_SUMMARY"
